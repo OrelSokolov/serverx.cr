@@ -1,0 +1,7 @@
+name: serverx
+version: 0.1.0
+description: |
+  Experimental nginx-style HTTP server for Crystal: one buffer per connection,
+  zero heap allocations per request, master/worker processes via SO_REUSEPORT.
+  Benchmarked against the stdlib HTTP::Server (scenario 400-serverx).
+crystal: ">= 1.21.0"

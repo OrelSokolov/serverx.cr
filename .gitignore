@@ -1,0 +1,5 @@
+bin/
+lib/
+shard.lock
+*.log
+/tmp
