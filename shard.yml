@@ -1,7 +1,10 @@
 name: serverx
-version: 0.1.0
+version: 0.2.1
 description: |
-  Experimental nginx-style HTTP server for Crystal: one buffer per connection,
-  zero heap allocations per request, master/worker processes via SO_REUSEPORT.
-  Benchmarked against the stdlib HTTP::Server (scenario 400-serverx).
+  nginx-style HTTP server for Crystal: one buffer per connection, offset-based
+  HTTP/1.1 parser with zero per-request allocations in the transport,
+  master/worker processes via SO_REUSEPORT, stock HTTP::Handler API on top
+  (any Crystal framework plugs in). Timeouts, limits, chunked bodies,
+  streaming uploads, graceful shutdown, TLS. Benchmarked against the stdlib
+  HTTP::Server and nginx (scenario 400/410-serverx of the rails.cr cycle).
 crystal: ">= 1.21.0"

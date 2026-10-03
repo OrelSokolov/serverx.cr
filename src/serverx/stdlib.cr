@@ -13,6 +13,8 @@ module ServerX
         context.response.print "Hello, World!"
       end
       server.bind_tcp(@host, @port, reuse_port: true)
+      Signal::TERM.trap { server.close rescue nil }
+      Signal::INT.trap { server.close rescue nil }
       server.listen
     end
   end

@@ -20,8 +20,8 @@ PORT=${PORT:-4510}
 MT_WORKERS=${MT_WORKERS:-8}
 
 echo "# building (release)..."
-crystal build --release -Dwithout_mt -o bin/serverx src/serverx.cr 2>/dev/null
-crystal build --release -o bin/serverx-mt src/serverx.cr 2>/dev/null
+crystal build --release -Dwithout_mt -o bin/serverx src/serverx_cli.cr 2>/dev/null
+crystal build --release -o bin/serverx-mt src/serverx_cli.cr 2>/dev/null
 
 # bench <label> <binary> <impl> <workers> <mt_workers_env|-> <conns>
 bench() {
@@ -104,8 +104,10 @@ echo "# cpu: $(nproc) cores; wrk shares the same cores"
 # single-threaded processes (fork model, like nginx workers)
 bench stdlib_st_w1     serverx    stdlib 1 -  $CONNS
 bench pooled_st_w1     serverx    pooled 1 -  $CONNS
+bench app_st_w1        serverx    app    1 -  $CONNS
 bench stdlib_st_w8     serverx    stdlib 8 -  $CONNS
 bench pooled_st_w8     serverx    pooled 8 -  $CONNS
+bench app_st_w8        serverx    app    8 -  $CONNS
 
 # multithreaded scheduler (one process, CRYSTAL_WORKERS threads)
 bench stdlib_mt_t8     serverx-mt stdlib 1 $MT_WORKERS $CONNS

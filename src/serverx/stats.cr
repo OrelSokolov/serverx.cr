@@ -4,9 +4,11 @@ module ServerX
   # reported gc_kb and is negligible next to any real request traffic.
   class Stats
     getter requests : Atomic(Int64)
+    getter tls_drops : Atomic(Int64)
 
     def initialize
       @requests = Atomic(Int64).new(0)
+      @tls_drops = Atomic(Int64).new(0)
     end
   end
 end
