@@ -11,24 +11,37 @@ module ServerX
   # child. (The Crystal runtime reaps all children itself via SIGCHLD +
   # `waitpid(-1, WNOHANG)`, so polling `waitpid`/`#exists?` from the master
   # cannot see a dead child — zombies never surface.)
+  #
+  # Multithreaded builds (Crystal's default since 1.21) cannot fork at all —
+  # `Process.fork` does not compile there. Shard flags do not propagate to
+  # the app build, so the cluster cannot "require" -Dwithout_mt; instead it
+  # degrades to a single in-process worker with a warning, and the app keeps
+  # compiling and serving (build with -Dwithout_mt for the fork cluster).
   module Cluster
     def self.run(host : String, port : Int32, workers : Int32,
                  worker_block : Proc(Nil),
                  shutdown_timeout : Time::Span = 15.seconds) : Nil
-      supervisor = Supervisor.new(worker_block)
-      supervisor.start(workers)
+      {% if flag?(:without_mt) %}
+        supervisor = Supervisor.new(worker_block)
+        supervisor.start(workers)
 
-      shutdown = ->do
-        supervisor.shutdown
-        exit 0
-      end
-      Signal::INT.trap { shutdown.call }
-      Signal::TERM.trap { shutdown.call }
+        shutdown = ->do
+          supervisor.shutdown
+          exit 0
+        end
+        Signal::INT.trap { shutdown.call }
+        Signal::TERM.trap { shutdown.call }
 
-      # The supervisor monitors do the work; park the master.
-      loop do
-        sleep 1.hour
-      end
+        # The supervisor monitors do the work; park the master.
+        loop do
+          sleep 1.hour
+        end
+      {% else %}
+        STDERR.puts "ServerX::Cluster: multithreaded build — fork unavailable, " \
+                    "running a single worker in-process " \
+                    "(build with -Dwithout_mt for the fork/SO_REUSEPORT cluster)"
+        worker_block.call
+      {% end %}
     end
 
     # Forks the workers, watches each with a blocking `Process#wait` monitor
