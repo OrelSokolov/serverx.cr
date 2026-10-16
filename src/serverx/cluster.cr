@@ -37,9 +37,9 @@ module ServerX
           sleep 1.hour
         end
       {% else %}
-        STDERR.puts "ServerX::Cluster: multithreaded build — fork unavailable, " \
-                    "running a single worker in-process " \
-                    "(build with -Dwithout_mt for the fork/SO_REUSEPORT cluster)"
+        STDERR.puts "\e[1;33mServerX::Cluster — cluster mode is off:\e[0m \e[33mmultithreaded " \
+                    "build cannot fork, running a single worker in-process. " \
+                    "Compile with \e[1m-Dwithout_mt\e[0m\e[33m for the fork/SO_REUSEPORT cluster\e[0m"
         worker_block.call
       {% end %}
     end

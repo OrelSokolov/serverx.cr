@@ -1,5 +1,5 @@
 name: serverx
-version: 0.2.2
+version: 0.2.3
 description: |
   nginx-style HTTP server for Crystal: one buffer per connection, offset-based
   HTTP/1.1 parser with zero per-request allocations in the transport,

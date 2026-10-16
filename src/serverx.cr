@@ -10,7 +10,7 @@ require "openssl"
 require "./serverx/*"
 
 module ServerX
-  VERSION = "0.2.2"
+  VERSION = "0.2.3"
 
   # Runtime configuration shared by all server implementations.
   class Config
